@@ -60,18 +60,6 @@ components:
           replyTo:
             type: string
             description: Topic dit utfallsmeddelandet ska skickas
-      payload:
-        $ref: "kogito-cloudevent.yaml#/components/schemas/KogitoCloudEvent"
-
     RegelKompletteringUtfallMessage:
       payload:
-        title: RegelKompletteringUtfallMessagePayload
-        allOf:
-          - $ref: "kogito-cloudevent.yaml#/components/schemas/KogitoCloudEvent"
-          - type: object
-            title: RegelKompletteringUtfallMessagePayloadData
-            required:
-              - data
-            properties:
-              data:
-                $ref: "#/components/schemas/RegelKompletteringUtfallMessagePayloadData"
+        $ref: "#/components/schemas/RegelKompletteringUtfallMessagePayloadData"
