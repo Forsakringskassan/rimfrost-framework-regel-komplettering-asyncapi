@@ -1,0 +1,65 @@
+asyncapi: 3.0.0
+
+info:
+  title: Regel Komplettering - Framework Async API
+  version: 1.0.0
+  description: Async API för kompletteringsregler
+
+channels:
+  regel.komplettering.utfall.subscription:
+    address: regel.komplettering.utfall.subscription
+    messages:
+      RegelKompletteringUtfallSubscriptionMessage:
+        $ref: "#/components/messages/RegelKompletteringUtfallSubscriptionMessage"
+
+  regel.komplettering.utfall:
+    address: regel.komplettering.utfall
+    messages:
+      RegelKompletteringUtfallMessage:
+        $ref: "#/components/messages/RegelKompletteringUtfallMessage"
+
+operations:
+  RegelKompletteringUtfallSubscription:
+    action: send
+    summary: Skickar en prenumeration på kompletteringsutfall — svar levereras till replyTo-topic i headern
+    channel:
+      $ref: "#/channels/regel.komplettering.utfall.subscription"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: "#/channels/regel.komplettering.utfall"
+
+  RegelKompletteringUtfall:
+    action: receive
+    summary: Hanterar ett utfall som en extern tjänst explicit har rapporterat in
+    channel:
+      $ref: "#/channels/regel.komplettering.utfall"
+
+components:
+  schemas:
+    RegelKompletteringUtfallMessagePayloadData:
+      type: object
+      title: RegelKompletteringUtfallMessagePayloadData
+      description: Förekomsten av detta meddelande innebär utfall JA — ingen explicit utfallsegenskap behövs
+      required:
+        - handlaggningId
+      properties:
+        handlaggningId:
+          type: string
+          format: uuid
+          description: Unikt ID som identifierar det handläggningsärende vars utfall har fastställts
+
+  messages:
+    RegelKompletteringUtfallSubscriptionMessage:
+      headers:
+        type: object
+        required:
+          - replyTo
+        properties:
+          replyTo:
+            type: string
+            description: Topic dit utfallsmeddelandet ska skickas
+    RegelKompletteringUtfallMessage:
+      payload:
+        $ref: "#/components/schemas/RegelKompletteringUtfallMessagePayloadData"
